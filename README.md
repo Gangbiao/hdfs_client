@@ -1,0 +1,1 @@
+HDFS Client test
