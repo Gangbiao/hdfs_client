@@ -1,0 +1,48 @@
+package hdfs;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.*;
+import org.apache.hadoop.io.IOUtils;
+
+import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Locale;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+
+public class Test {
+
+	public static void main(String[] args) throws URISyntaxException, Throwable {
+		// TODO Auto-generated method stub
+		readFromServer();
+		putFileToServer();
+		createDir();
+		}
+	//读取hdfs服务器上一个文件的内容
+	private static void readFromServer() throws URISyntaxException, IOException {
+		URI uri = new URI("hdfs://10.13.30.27:9000/");
+		FileSystem filesystem = FileSystem.get(uri, new Configuration());
+		FSDataInputStream fsDataInpuStream = filesystem.open(new Path(
+				"hdfs://10.13.30.27:9000/hdfs-ramcloud.c"));
+		
+		IOUtils.copyBytes(fsDataInpuStream, System.out, new Configuration(),
+							true);
+	}
+	//上传文件到hdfs服务器
+	private static void putFileToServer() throws URISyntaxException, IOException {
+		URI uri = new URI("hdfs://10.13.30.27:9000/");
+		FileSystem filesystem = FileSystem.get(uri, new Configuration());
+		FSDataOutputStream fsDataOutputStream = filesystem.create(new Path("hdfs://10.13.30.27:9000/test.txt"), true);
+		FileInputStream fileInputStream =new FileInputStream("test.txt");
+		IOUtils.copyBytes(fileInputStream, fsDataOutputStream, new Configuration(),true);
+	}
+	//创建目录
+	private static void createDir() throws URISyntaxException, IOException {
+		URI uri = new URI("hdfs://10.13.30.27:9000/");
+		FileSystem filesystem = FileSystem.get(uri, new Configuration());
+		filesystem.mkdirs(new Path("hdfs://10.13.30.27:9000/liu"));
+	}
+}
